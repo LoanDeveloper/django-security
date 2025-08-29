@@ -13,5 +13,5 @@ COPY . .
 RUN chown -R appuser:appuser /usr/src/app && chmod -R u+rwX /usr/src/app
 
 USER appuser
-EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 80
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
