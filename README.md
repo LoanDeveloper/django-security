@@ -1,4 +1,4 @@
-# TP-01 — Auth Django sécurisé
+# TP-01 — Auth Django sécurisé - Nexa
 
 ## Prérequis
 - Python 3.10+
