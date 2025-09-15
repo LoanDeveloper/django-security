@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ product.name }}</h1>
+<p>Catégorie: {{ product.category.name }}</p>
+<p>Prix: {{ product.price }} €</p>
+<p>Stock: {{ product.stock }}</p>
+<p>Actif: {{ product.is_active }}</p>
+<p>Créé: {{ product.created_at }} — Mis à jour: {{ product.updated_at }}</p>
+<p><a href="{% url 'product_list' %}">Retour à la liste</a></p>
+{% endblock %}
+
+

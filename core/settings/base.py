@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django_htmx",
     # Local apps
     "accounts",
+    "catalog",
 ]
 
 MIDDLEWARE = [

@@ -1,25 +1,43 @@
-# TP-01 — Auth Django sécurisé - Nexa
+# SmartMarket — TP-01 (socle Django: Catalog, Qualité)
 
 ## Prérequis
 - Python 3.10+
 - Linux/macOS/WSL
 
-## Installation rapide
+## Installation rapide (Docker)
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-cp .env.example .env  # éditez SECRET_KEY, DEBUG, ALLOWED_HOSTS
-python manage.py migrate
-python manage.py runserver
+cp .env.example .env
+make up          # build + démarre le service web
+make migrate     # applique les migrations
+make seed        # remplit des données de démo
+```
+
+Accès:
+- Application: http://localhost:8000/
+- Admin: http://localhost:8000/admin (créez un compte admin: `make superuser`)
+- Debug Toolbar (dev): http://localhost:8000/__debug__/
+
+Commandes utiles:
+```bash
+make test        # lance pytest
+make lint        # ruff + black --check
+make fmt         # ruff --fix + black
+make logs        # logs du service web
+make down        # stoppe les services
+```
+
+## Installation locale (option)
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install --upgrade pip -r requirements.txt
+cp .env.example .env
+python manage.py migrate && python manage.py runserver
 ```
 
 URLs:
-- /register
-- /login
-- /logout
-- /dashboard (protégée)
+- Racine: liste des produits
+- Détail produit: /p/<slug>/
+- Auth: /register, /login, /logout, /dashboard (protégée)
 
 ## Sécurité (résumé)
 - Secrets via `.env` (django-environ)
@@ -42,6 +60,14 @@ pytest -q
 ```bash
 pip-audit
 ```
+
+## Variables d’environnement (.env)
+Voir `.env.example` fourni. Par défaut, la base est SQLite (`db.sqlite3`).
+
+## Captures à fournir
+- Admin → liste des produits avec filtres/actions visibles
+- Debug toolbar avec requêtes sur la liste des produits
+- Pages: liste des produits et détail
 
 ## Rapport sécurité (Markdown)
 

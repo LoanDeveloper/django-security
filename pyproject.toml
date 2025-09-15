@@ -1,0 +1,15 @@
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+exclude = [".venv", "pgdata"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "pgdata", "migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []
+
+
