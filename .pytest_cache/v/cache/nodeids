@@ -1,0 +1,16 @@
+[
+  "accounts/tests.py::AuthFlowTests::test_csrf_required_on_post",
+  "accounts/tests.py::AuthFlowTests::test_dashboard_requires_auth",
+  "accounts/tests.py::AuthFlowTests::test_lockout_after_failures",
+  "accounts/tests.py::AuthFlowTests::test_login_success",
+  "accounts/tests.py::AuthFlowTests::test_register_email_taken",
+  "accounts/tests.py::AuthFlowTests::test_register_success",
+  "accounts/tests.py::AuthFlowTests::test_xss_escaped_in_dashboard",
+  "catalog/tests.py::test_api_auth_success_and_fail",
+  "catalog/tests.py::test_api_contracts_errors",
+  "catalog/tests.py::test_api_permissions_order_object_level",
+  "catalog/tests.py::test_api_rgpd_export_and_erase",
+  "catalog/tests.py::test_api_throttling_export",
+  "catalog/tests.py::test_product_list_and_detail_views",
+  "catalog/tests.py::test_unique_category_slug_constraint"
+]

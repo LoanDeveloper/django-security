@@ -1,15 +1,20 @@
 import logging
 
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_protect
-from django.conf import settings
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .forms import RegistrationForm, LoginForm
+from catalog.models import Order
+
+from .forms import LoginForm, RegistrationForm
 from .tokens import email_confirmation_token
 
 logger = logging.getLogger("auth")
@@ -27,7 +32,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            require_email_confirm = getattr(settings, 'REQUIRE_EMAIL_CONFIRM', False)
+            require_email_confirm = getattr(settings, "REQUIRE_EMAIL_CONFIRM", False)
             if require_email_confirm:
                 user.is_active = False
             user.save()
@@ -36,11 +41,12 @@ def register_view(request: HttpRequest) -> HttpResponse:
             if require_email_confirm:
                 from django.core.mail import send_mail
                 from django.urls import reverse
-                from django.utils.http import urlsafe_base64_encode
                 from django.utils.encoding import force_bytes
+                from django.utils.http import urlsafe_base64_encode
+
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 token = email_confirmation_token.make_token(user)
-                url = request.build_absolute_uri(reverse('confirm_email', args=[uidb64, token]))
+                url = request.build_absolute_uri(reverse("confirm_email", args=[uidb64, token]))
                 send_mail(
                     subject="Confirmez votre adresse email",
                     message=f"Bonjour {user.username}, cliquez pour confirmer: {url}",
@@ -88,8 +94,9 @@ def dashboard_view(request: HttpRequest) -> HttpResponse:
 
 
 def confirm_email_view(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
-    from django.utils.http import urlsafe_base64_decode
     from django.utils.encoding import force_str
+    from django.utils.http import urlsafe_base64_decode
+
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -102,5 +109,54 @@ def confirm_email_view(request: HttpRequest, uidb64: str, token: str) -> HttpRes
         return redirect("login")
     messages.error(request, "Lien invalide ou expiré")
     return redirect("home")
+
+
+class RGPDExportView(APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_scope = "export"
+
+    def get(self, request):
+        user = request.user
+        orders = Order.objects.filter(user=user)
+        data = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "date_joined": user.date_joined,
+                "is_active": user.is_active,
+            },
+            "orders": [
+                {
+                    "id": o.id,
+                    "product": o.product.name,
+                    "quantity": o.quantity,
+                    "created_at": o.created_at,
+                }
+                for o in orders
+            ],
+        }
+        logger.info(f"[RGPD] Export demandé par user_id={user.id}")
+        return Response(data)
+
+
+class RGPDEraseView(APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_scope = "erase"
+
+    def post(self, request):
+        user = request.user
+        # Anonymisation des commandes
+        Order.objects.filter(user=user).update(user=None)
+        # Désactivation du compte
+        user.is_active = False
+        user.email = f"anon_{user.id}@example.com"
+        user.username = f"anon_{user.id}"
+        user.save(update_fields=["is_active", "email", "username"])
+        logger.info(f"[RGPD] Suppression logique du compte user_id={user.id}")
+        return Response(
+            {"detail": "Compte désactivé et commandes anonymisées."}, status=status.HTTP_200_OK
+        )
+
 
 # Create your views here.

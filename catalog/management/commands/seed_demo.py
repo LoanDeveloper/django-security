@@ -36,5 +36,3 @@ class Command(BaseCommand):
             )
 
         self.stdout.write(self.style.SUCCESS("Données de démo insérées."))
-
-

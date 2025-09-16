@@ -30,5 +30,3 @@ class ProductAdmin(admin.ModelAdmin):
     @admin.action(description="Désactiver les produits sélectionnés")
     def mark_inactive(self, request, queryset):
         queryset.update(is_active=False)
-
-

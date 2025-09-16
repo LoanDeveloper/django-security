@@ -1,0 +1,13 @@
+2025-08-27 09:30:07,049 [INFO] auth User login: username=carol
+2025-08-27 09:30:07,210 [INFO] auth New user registered: username=alice
+2025-08-27 09:30:07,342 [INFO] auth User login: username=<script>alert('x')</script>
+2025-08-27 09:30:25,935 [INFO] auth User login: username=carol
+2025-08-27 09:30:26,155 [INFO] auth New user registered: username=alice
+2025-08-27 09:30:26,327 [INFO] auth User login: username=<script>alert('x')</script>
+2025-08-27 09:43:33,256 [INFO] auth New user registered: username=test
+2025-08-27 09:43:42,668 [INFO] auth User login: username=test
+2025-08-27 09:57:02,333 [INFO] auth User logout: username=test
+2025-08-27 09:57:11,481 [INFO] auth User login: username=test
+2025-08-27 09:57:22,109 [INFO] auth User logout: username=test
+2025-08-27 09:57:45,287 [INFO] auth New user registered: username=test1
+2025-08-27 09:58:59,441 [INFO] auth New user registered: username=t

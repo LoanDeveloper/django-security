@@ -6,5 +6,3 @@ class EmailConfirmationTokenGenerator(PasswordResetTokenGenerator):
 
 
 email_confirmation_token = EmailConfirmationTokenGenerator()
-
-

@@ -27,12 +27,18 @@ INSTALLED_APPS = [
     # Third-party
     "axes",
     "django_htmx",
+    "rest_framework",
+    "drf_spectacular",
+    "corsheaders",
+    "django_filters",
     # Local apps
     "accounts",
     "catalog",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -80,7 +86,10 @@ DATABASES = {
 # Password validation and hashing
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 12}},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 12},
+    },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
@@ -168,8 +177,61 @@ LOGGING = {
     "loggers": {
         "django.security.csrf": {"handlers": ["console"], "level": "WARNING", "propagate": True},
         "auth": {"handlers": ["auth_file", "console"], "level": "INFO", "propagate": False},
-        "axes.watch_login": {"handlers": ["auth_file", "console"], "level": "INFO", "propagate": False},
+        "axes.watch_login": {
+            "handlers": ["auth_file", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
 
+# Django REST Framework settings
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/minute",
+        "user": "120/minute",
+    },
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
+}
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "TP2 API",
+    "DESCRIPTION": "API publique versionnée avec endpoints RGPD.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
+# CORS (whitelist stricte en dev)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# Throttling DRF (endpoints sensibles)
+REST_FRAMEWORK["DEFAULT_THROTTLE_CLASSES"] += [
+    "rest_framework.throttling.ScopedRateThrottle",
+]
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update(
+    {
+        "login": "10/minute",
+        "password_reset": "10/minute",
+        "export": "10/minute",
+        "erase": "10/minute",
+    }
+)

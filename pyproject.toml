@@ -1,7 +1,7 @@
 [tool.black]
 line-length = 100
 target-version = ["py312"]
-exclude = [".venv", "pgdata"]
+exclude = "\\.venv|pgdata"
 
 [tool.ruff]
 line-length = 100
