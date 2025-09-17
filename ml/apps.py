@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class MlConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'ml'
+    verbose_name = 'Machine Learning'
+    
+    def ready(self):
+        import ml.signals

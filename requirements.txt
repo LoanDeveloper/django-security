@@ -49,3 +49,6 @@ djangorestframework==3.15.1
 drf-spectacular==0.27.2
 django-cors-headers==4.8.0
 django-filter==25.1
+scikit-learn>=1.4.0
+nltk>=3.8.1
+numpy>=1.24.0

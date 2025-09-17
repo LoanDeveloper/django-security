@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts",
     "catalog",
+    "ml",
 ]
 
 MIDDLEWARE = [
@@ -233,5 +234,22 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update(
         "password_reset": "10/minute",
         "export": "10/minute",
         "erase": "10/minute",
+        "ml_requests": "30/minute",
     }
 )
+
+# Cache configuration for ML module
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+        "TIMEOUT": 300,
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+        }
+    }
+}
+
+# ML module settings
+ML_INDEX_DIR = BASE_DIR / "ml_indexes"
+ML_INDEX_DIR.mkdir(exist_ok=True)
